@@ -1,6 +1,6 @@
 # git-publish
 
-将当前项目一键推送到 GitHub 远程仓库的 Claude Code skill。
+将当前项目一键推送到 GitHub 远程仓库的 AI Coding Agent Skill，兼容 Claude Code、Codex CLI、OpenCode 等主流 AI 编程工具。
 
 ## 功能
 
@@ -11,17 +11,76 @@
 
 ## 安装
 
-将本仓库克隆到 `.claude/skills/git-publish/` 目录下即可。
+### Claude Code
+
+将本仓库克隆到 Claude Code 的 skills 目录：
+
+```bash
+# 全局安装（所有项目可用）
+git clone https://github.com/orbisz/git-publish-skill.git ~/.claude/skills/git-publish
+
+# 或者项目级安装（仅当前项目可用）
+git clone https://github.com/orbisz/git-publish-skill.git .claude/skills/git-publish
+```
+
+安装后重启 Claude Code 即可生效。
+
+### Codex CLI
+
+Codex CLI（v0.65+）兼容 Claude Code 的 skill 格式，直接复制即可使用：
+
+```bash
+# 全局安装
+git clone https://github.com/orbisz/git-publish-skill.git ~/.codex/skills/git-publish
+
+# 或者项目级安装
+git clone https://github.com/orbisz/git-publish-skill.git .codex/skills/git-publish
+```
+
+如果尚未启用 skills 功能，需在 `~/.codex/config.toml` 中添加：
+
+```toml
+[features]
+skills = true
+```
+
+然后重启 Codex，使用 `/skills` 查看已安装的技能。
+
+### OpenCode
+
+OpenCode（v1.0.110+）通过插件支持 skills，首先在 `~/.config/opencode/opencode.json` 中启用插件：
+
+```json
+{
+  "plugin": ["opencode-agent-skills"]
+}
+```
+
+然后将本仓库安装到 skills 目录：
+
+```bash
+# 全局安装
+git clone https://github.com/orbisz/git-publish-skill.git ~/.opencode/skills/git-publish
+
+# 或者项目级安装
+git clone https://github.com/orbisz/git-publish-skill.git .opencode/skills/git-publish
+```
+
+重启 OpenCode 后生效。
+
+### 其他 AI 工具
+
+任何遵循 Anthropic Agent Skills 规范的工具都可以使用本 skill，只需将仓库克隆到对应工具的 skills 目录下即可。
 
 ## 使用方式
 
-在 Claude Code 中，进入任意项目目录，直接告诉 Claude：
+在任何支持的 AI 工具中，进入项目目录，直接对话即可：
 
 - "帮我把这个项目推送到 GitHub"
 - "push 到 https://github.com/user/repo.git"
 - "上传到远程仓库"
 
-Claude 会自动识别并调用此 skill，按以下流程执行：
+AI 会自动识别并调用此 skill，按以下流程执行：
 
 1. **询问仓库地址** — 如果你还没提供，Claude 会先向你要 GitHub 仓库 URL
 2. **初始化 Git**（如需） — 如果项目还未初始化 git，自动执行 `git init` + 初始提交 + 添加 remote
@@ -39,7 +98,7 @@ Claude 会自动识别并调用此 skill，按以下流程执行：
 ```
 用户: 把这个项目push到 https://github.com/myuser/my-project.git
 
-Claude 会:
+AI 会:
 1. 检查 git 状态
 2. 如需则 git init 并初始提交
 3. 处理未提交改动，生成如 "feat: add user authentication module" 的提交信息
