@@ -11,14 +11,19 @@ Push the current project to a GitHub remote repository with a single workflow.
 
 Follow these steps in order:
 
-### Step 1: Get the remote URL from the user
+### Step 1: Resolve the remote URL
 
-Before doing anything else, ask the user to provide the GitHub repository URL. Accept formats like:
-- `https://github.com/user/repo.git`
-- `git@github.com:user/repo.git`
-- `https://github.com/user/repo`
+Before doing anything else, determine the GitHub repository URL.
 
-If the user hasn't provided a URL yet, ask: "请提供GitHub仓库地址（例如 https://github.com/user/repo.git）："
+1. Read the repo mapping file at `references/repo-map.json` (relative to this skill's directory). This file maps local project paths to their GitHub URLs.
+2. Compare the current working directory (the project the user wants to push) against the keys in the mapping.
+3. **If a mapping is found:** Use the stored URL. Tell the user: "检测到该项目对应的仓库：<URL>，直接使用。"
+4. **If no mapping is found:** Ask the user to provide the GitHub repository URL. Accept formats like:
+   - `https://github.com/user/repo.git`
+   - `git@github.com:user/repo.git`
+   - `https://github.com/user/repo`
+
+   If the user hasn't provided a URL yet, ask: "请提供GitHub仓库地址（例如 https://github.com/user/repo.git）："
 
 ### Step 2: Check and initialize Git if needed
 
@@ -63,9 +68,17 @@ Proceed directly to push.
    - If user agrees: `git push -u origin <branch> --force`
    - If user declines: stop and report the situation
 
-### Step 5: Confirm success
+### Step 5: Save the mapping and confirm success
 
-After a successful push, report:
-- The remote URL
-- The branch that was pushed
-- The commit message(s) that were pushed
+After a successful push:
+
+1. **Save the mapping** — Update `references/repo-map.json` to record the current project path and its GitHub URL, so future pushes for this project won't need to ask for the URL again. Read the file, add or update the entry, and write it back. The key is the absolute path of the project directory, the value is the remote URL.
+
+2. **Confirm success** — Report:
+   - The remote URL
+   - The branch that was pushed
+   - The commit message(s) that were pushed
+
+## Reference files
+
+- `references/repo-map.json` — Local path to GitHub URL mappings. Read this first to resolve the remote URL; update it after each successful push.
