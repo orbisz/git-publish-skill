@@ -90,3 +90,11 @@ After a successful push:
 ## Reference files
 
 - `references/repo-map.json` — Local path to GitHub URL mappings. Read this first to resolve the remote URL; update it after each successful push.
+
+## Self-Evolution Mechanism
+
+After each execution of this Skill:
+
+1. Evaluate whether the output achieved the intended goal: **pass / fail**.
+2. If it fails, reflect on the cause of failure and append a “failure case + improvement suggestion” to `diary/YYYY-MM-DD.md`.
+3. If a certain improvement suggestion is repeatedly mentioned in the most recent three executions, refine it into a formal rule and submit a PR to modify this `SKILL.md`.
