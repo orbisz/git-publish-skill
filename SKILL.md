@@ -64,7 +64,15 @@ Proceed directly to push.
 
 1. Detect the current branch: `git branch --show-current`
 2. Try normal push first: `git push -u origin <branch>`
-3. If the push fails (e.g., due to divergent histories), present the error to the user and ask: "普通推送失败，是否使用强制推送？这可能会覆盖远程仓库的历史。(y/n)"
+3. **If the push fails with a connection error** (e.g., "Could not connect to server", "Failed to connect", timeout, network unreachable), check if the remote URL uses HTTPS protocol:
+   - Run `git remote get-url origin` to inspect the current URL.
+   - If the URL starts with `https://`, retry up to **3 times** with a short pause between retries.
+   - If all 3 HTTPS retries fail, **automatically switch the remote to SSH**:
+     - Convert the URL: `https://github.com/user/repo.git` → `git@github.com:user/repo.git`
+     - Run `git remote set-url origin git@github.com:user/repo.git`
+     - Try pushing again with SSH.
+   - If the remote is already using SSH and the connection fails, retry up to 3 times, then report the error to the user.
+4. **If the push fails for other reasons** (e.g., divergent histories, non-fast-forward), present the error to the user and ask: "普通推送失败，是否使用强制推送？这可能会覆盖远程仓库的历史。(y/n)"
    - If user agrees: `git push -u origin <branch> --force`
    - If user declines: stop and report the situation
 
